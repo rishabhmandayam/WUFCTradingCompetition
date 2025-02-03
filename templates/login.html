@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Participant Login</title>
+     <style>
+        /*
+           Overall scheme:
+             - Header/Footer: black background (#111 or #000), white text
+             - Main accent color: red (#ff2d2d) for buttons/ high-level headings
+             - Light backgrounds (#fff) for sections/tables, with black (#333) text
+        */
+
+        /* BODY */
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff; /* White background for good readability */
+            color: #333;       /* Dark text color */
+        }
+
+        /* HEADER & FOOTER */
+        header, footer {
+            background-color: #000;  /* Black background */
+            color: #fff;             /* White text */
+            padding: 20px;
+            /* If you have a bull silhouette, you can keep using it: */
+            background-image: url('/static/bull_silhouette.png');
+            background-repeat: no-repeat;
+            background-position: right bottom;
+            background-size: 80px auto;
+        }
+
+        header h1, footer h1 {
+            margin: 0;
+        }
+        footer h1 { font-size: 1.2em; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* HEADINGS */
+        h1, h2, h3 {
+            margin-bottom: 10px;
+            color: #ff2d2d; /* Use red accent for headings */
+        }
+
+        /* FORMS */
+        form {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+            vertical-align: middle;
+            font-weight: bold;
+            color: #333; /* Slightly darker for contrast on white backgrounds */
+        }
+        input[type=text], select {
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        /* BUTTONS */
+        button {
+            background: #ff2d2d;   /* Red button */
+            color: #fff;          /* White text */
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #cc0202;  /* Darker red on hover */
+        }
+
+        /* NAV */
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #ff2d2d;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ff2d2d;
+            border-radius: 3px;
+            transition: background 0.3s, color 0.3s;
+        }
+        nav a:hover {
+            background: #ff2d2d;
+            color: #fff;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 30px;
+            background: #fff;  /* White background block */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08); /* Subtle shadow for a "card" effect */
+        }
+
+        /* TABLES */
+        table {
+            border-collapse: separate;  /* We can do separate to allow spacing if we want */
+            border-spacing: 0;
+            width: 100%;
+            margin-bottom: 20px;
+            background: #fff; /* White background inside the section, consistent */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            overflow: hidden;  /* If we have rounded corners, this ensures the table corners are clipped */
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        th {
+            background: #f7f7f7;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+            color: #555; /* Slightly darker text for the header row */
+        }
+        table thead th {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Subtle zebra striping */
+        }
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* ORDERBOOK TABLE SPECIFICS */
+        table.orderbook-table thead th {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .orderbook-table h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75em;
+            border-bottom: 2px solid #ff2d2d;
+            display: inline-block;
+            padding-bottom: 4px;
+            color: #ff2d2d;
+        }
+        .orderbook-table td:nth-child(1),
+        .orderbook-table td:nth-child(2),
+        .orderbook-table td:nth-child(3) {
+            text-align: center; /* Price, Quantity, Timestamp columns center-aligned */
+        }
+
+        /* FLEX LAYOUT FOR BIDS/ASKS TABLES */
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .table-container {
+            flex: 1;
+            overflow-x: auto;
+        }
+
+        /* HOLDINGS TABLE STYLING */
+        #holdings-container table {
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to WUFC Trading Platform</h1>
+</header>
+<div class="container">
+    <div class="section">
+        <h2>Login</h2>
+        <form method="POST">
+            <label>Participant ID:</label>
+            <input type="text" name="participant_id" required />
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</div>
+<footer>
+    <p>&copy; 2024 WUFC Trading Comp</p>
+</footer>
+</body>
+</html>

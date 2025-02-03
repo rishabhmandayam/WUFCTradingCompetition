@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        /*
+           Overall scheme:
+             - Header/Footer: black background (#111 or #000), white text
+             - Main accent color: red (#ff2d2d) for buttons/ high-level headings
+             - Light backgrounds (#fff) for sections/tables, with black (#333) text
+        */
+
+        /* BODY */
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff; /* White background for good readability */
+            color: #333;       /* Dark text color */
+        }
+
+        /* HEADER & FOOTER */
+        header, footer {
+            background-color: #000;  /* Black background */
+            color: #fff;             /* White text */
+            padding: 20px;
+            /* If you have a bull silhouette, you can keep using it: */
+            background-image: url('/static/bull_silhouette.png');
+            background-repeat: no-repeat;
+            background-position: right bottom;
+            background-size: 80px auto;
+        }
+
+        header h1, footer h1 {
+            margin: 0;
+        }
+        footer h1 { font-size: 1.2em; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* HEADINGS */
+        h1, h2, h3 {
+            margin-bottom: 10px;
+            color: #ff2d2d; /* Use red accent for headings */
+        }
+
+        /* FORMS */
+        form {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+            vertical-align: middle;
+            font-weight: bold;
+            color: #333; /* Slightly darker for contrast on white backgrounds */
+        }
+        input[type=text], select {
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        /* BUTTONS */
+        button {
+            background: #ff2d2d;   /* Red button */
+            color: #fff;          /* White text */
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #cc0202;  /* Darker red on hover */
+        }
+
+        /* NAV */
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #ff2d2d;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ff2d2d;
+            border-radius: 3px;
+            transition: background 0.3s, color 0.3s;
+        }
+        nav a:hover {
+            background: #ff2d2d;
+            color: #fff;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 30px;
+            background: #fff;  /* White background block */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08); /* Subtle shadow for a "card" effect */
+        }
+
+        /* TABLES */
+        table {
+            border-collapse: separate;  /* We can do separate to allow spacing if we want */
+            border-spacing: 0;
+            width: 100%;
+            margin-bottom: 20px;
+            background: #fff; /* White background inside the section, consistent */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            overflow: hidden;  /* If we have rounded corners, this ensures the table corners are clipped */
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        th {
+            background: #f7f7f7;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+            color: #555; /* Slightly darker text for the header row */
+        }
+        table thead th {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Subtle zebra striping */
+        }
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* ORDERBOOK TABLE SPECIFICS */
+        table.orderbook-table thead th {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .orderbook-table h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75em;
+            border-bottom: 2px solid #ff2d2d;
+            display: inline-block;
+            padding-bottom: 4px;
+            color: #ff2d2d;
+        }
+        .orderbook-table td:nth-child(1),
+        .orderbook-table td:nth-child(2),
+        .orderbook-table td:nth-child(3) {
+            text-align: center; /* Price, Quantity, Timestamp columns center-aligned */
+        }
+
+        /* FLEX LAYOUT FOR BIDS/ASKS TABLES */
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .table-container {
+            flex: 1;
+            overflow-x: auto;
+        }
+
+        /* HOLDINGS TABLE STYLING */
+        #holdings-container table {
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        #countdown-timer {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.3em;
+  color: #fff;
+  /* Let’s give it a bold, distinctive look: */
+  background: rgba(0, 0, 0, 0.6);  /* semi-transparent black backdrop */
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: background 0.3s ease;
+}
+
+/* Optionally, you can change the timer's background color on hover or if time is low. */
+#countdown-timer.low-time {
+  background: rgba(255, 45, 45, 0.8);  /* bright red if time is critical */
+  color: #fff;
+}
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>WUFC Trading Exchange Dashboard</h1>
+    <div id="countdown-timer"
+         style="position: absolute; top: 23px; right: 550px; font-size: 1.4em; color: #fff;">
+         05:00
+    </div>
+</header>
+<div class="container">
+
+    <nav>
+        <a href="{{ url_for('logout') }}" style="color: white;">Logout</a>
+    </nav>
+
+    <div class="section">
+        <h2>Hello, {{ participant_id }}</h2>
+        <p>Select Symbol:</p>
+        <form method="GET" action="{{ url_for('dashboard') }}">
+            <select name="symbol" id="symbol-select">
+                {% for sym in securities %}
+                <option value="{{ sym }}" {% if sym == selected_symbol %}selected{% endif %}>{{ sym }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Order Book for <span id="ob-symbol">{{ selected_symbol }}</span></h2>
+        <div class="flex-row">
+            <div class="table-container">
+                <h3>Bids</h3>
+                <table class="orderbook-table">
+                    <thead>
+                        <tr><th>Price</th><th>Quantity</th></tr>
+                    </thead>
+                    <tbody id="bids-tbody">
+                        {% for price, qty in bids %}
+                        <tr><td>{{ price }}</td><td>{{ qty }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>Asks</h3>
+                <table class="orderbook-table">
+                    <thead>
+                        <tr><th>Price</th><th>Quantity</th></tr>
+                    </thead>
+                    <tbody id="asks-tbody">
+                        {% for price, qty in asks %}
+                        <tr><td>{{ price }}</td><td>{{ qty }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Your Holdings</h2>
+        <div id="holdings-container">
+            <table>
+                <thead><tr><th>Symbol</th><th>Quantity</th></tr></thead>
+                <tbody id="holdings-tbody">
+                {% for sym, q in holdings.items() %}
+                <tr><td>{{ sym }}</td><td>{{ q }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <p>Balance: $<span id="balance-value">{{ balance }}</span></p>
+            <p>PNL: $<span id="pnl-value">{{ pnl|round(2) }}</span></p>
+        </div>
+    </div>
+<!-- 
+    <div class="section">
+        <h2>Place Order</h2>
+        <form method="POST">
+            <label>Side:</label>
+            <select name="side">
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+            </select><br/>
+            <label>Order Type:</label>
+            <select name="order_type">
+                <option value="limit">Limit</option>
+                <option value="market">Market</option>
+            </select><br/>
+            <label>Price (limit):</label>
+            <input type="text" name="price" /><br/>
+            <label>Quantity:</label>
+            <input type="text" name="quantity" value="10" /><br/>
+            <input type="hidden" name="symbol" value="{{selected_symbol}}" /> //TODO: FIX THIS SHIT
+            <button type="submit">Submit</button>
+        </form>
+    </div> -->
+
+</div>
+<footer>
+    <p>&copy; 2024 WUFC Trading Comp</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const symbolSelect = document.getElementById('symbol-select');
+    const bidsTableBody = document.getElementById('bids-tbody');
+    const asksTableBody = document.getElementById('asks-tbody');
+    const holdingsTbody = document.getElementById('holdings-tbody');
+    const balanceValue = document.getElementById('balance-value');
+    const pnlValue = document.getElementById('pnl-value');
+    const obSymbolSpan = document.getElementById('ob-symbol');
+
+    let currentSymbol = symbolSelect.value;
+    
+    //callAllStrategies()
+
+    // Fetch and update order book
+    function updateOrderBook() {
+    const requestSymbol = currentSymbol;  // see the approach for discarding stale data
+    fetch(`/orderbook_data?symbol=${requestSymbol}`)
+        .then(response => response.json())
+        .then(data => {
+            // If the symbol has changed since fetch started, discard
+            if (requestSymbol !== currentSymbol) return;
+
+            const { bids, asks } = data;
+            bidsTableBody.innerHTML = '';
+            asksTableBody.innerHTML = '';
+
+            // Ensure slicing of bids and asks
+            const topBids = bids.slice(0, 30);
+            const topAsks = asks.slice(0, 30);
+
+            topBids.forEach(([price, qty]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${price.toFixed(2)}</td><td>${qty}</td>`;
+                bidsTableBody.appendChild(tr);
+            });
+
+            topAsks.forEach(([price, qty]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${price.toFixed(2)}</td><td>${qty}</td>`;
+                asksTableBody.appendChild(tr);
+            });
+        })
+        .catch(err => console.error('Error updating order book:', err));
+}
+
+    // Fetch and update participant data (holdings, balance, PnL)
+    function updateParticipantData() {
+        fetch(`/participant_data`)
+            .then(response => response.json())
+            .then(data => {
+                const { holdings, balance, pnl } = data;
+
+                holdingsTbody.innerHTML = '';
+                for (const sym in holdings) {
+                    const qty = holdings[sym];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${sym}</td><td>${qty}</td>`;
+                    holdingsTbody.appendChild(tr);
+                }
+
+                balanceValue.textContent = balance.toFixed(2);
+                pnlValue.textContent = pnl.toFixed(2);
+            })
+            .catch(err => console.error('Error updating participant data:', err));
+    }
+
+    // When the symbol changes, update currentSymbol and refresh order book
+    symbolSelect.addEventListener('change', () => {
+        currentSymbol = symbolSelect.value;
+        obSymbolSpan.textContent = currentSymbol;
+        updateOrderBook();
+    });
+
+    // Optionally call all strategies less frequently or remove
+    function callAllStrategies() {
+        fetch(`/call_all_strategies`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('All strategies called:', data);
+            })
+            .catch(err => console.error('Error calling all strategies:', err));
+    }
+
+    // Polling interval
+    setInterval(() => {
+        updateOrderBook();
+        updateParticipantData();
+        //callAllStrategies();
+    }, 250);
+
+    // Initial load
+    updateOrderBook();
+    updateParticipantData();
+});
+let roundDuration = 90; // e.g., 5 * 60 for 5 minutes
+let ongoing = false;
+const HEARTBEAT_INTERVAL = 1000; // 1 second for regular heartbeat
+const HEARTBEAT_THRESHOLD = 5000; // 5 seconds for detecting script termination
+
+function startCountdown() {
+    const timerEl = document.getElementById('countdown-timer');
+    if (!timerEl) return;
+
+    // Check if a saved start time exists or detect stale state
+    let startTime = localStorage.getItem('roundStartTime');
+    let lastHeartbeat = localStorage.getItem('lastHeartbeat');
+    let currentTime = Date.now();
+
+    if (!startTime || !lastHeartbeat || currentTime - lastHeartbeat > HEARTBEAT_THRESHOLD) {
+        // Timer reset due to stale state or no start time
+        startTime = currentTime;
+        localStorage.setItem('roundStartTime', startTime);
+    }
+
+    // Calculate remaining time based on elapsed time
+    const elapsed = Math.floor((currentTime - startTime) / 1000); // Convert ms to seconds
+    let remaining = roundDuration - elapsed;
+
+    if (remaining <= 0) {
+        // If time has already elapsed, reset the state and redirect
+        endCountdown();
+        return;
+    }
+
+    const updateTimer = () => {
+        // Convert 'remaining' seconds into mm:ss
+        let minutes = Math.floor(remaining / 60);
+        let seconds = remaining % 60;
+
+        // Format with leading zero if needed
+        let display =
+            (minutes < 10 ? "0" : "") + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds;
+
+        timerEl.textContent = display;
+
+        if (remaining <= 30) {
+            timerEl.classList.add('low-time');
+        } else {
+            timerEl.classList.remove('low-time');
+        }
+
+        if (remaining <= 0) {
+            // Time is up: Reset state and redirect
+            endCountdown();
+        } else {
+            remaining--;
+            setTimeout(updateTimer, 1000);
+        }
+    };
+
+    // Start the timer only if it hasn't started already
+    if (!ongoing) {
+        ongoing = true;
+        updateTimer();
+    }
+
+    // Start heartbeat
+    startHeartbeat();
+}
+
+function startHeartbeat() {
+    const updateHeartbeat = () => {
+        localStorage.setItem('lastHeartbeat', Date.now());
+        if (ongoing) {
+            setTimeout(updateHeartbeat, HEARTBEAT_INTERVAL);
+        }
+    };
+    updateHeartbeat();
+}
+
+function endCountdown() {
+    ongoing = false;
+    localStorage.removeItem('roundStartTime'); // Clear the timer state
+    localStorage.removeItem('lastHeartbeat'); // Clear the heartbeat state
+    window.location.href = "/end_round"; // Redirect to the end-round page
+}
+
+// Call startCountdown after DOM loads or within your existing DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    startCountdown();
+});
+
+
+</script>
+</body>
+</html>
