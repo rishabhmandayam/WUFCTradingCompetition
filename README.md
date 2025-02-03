@@ -1,5 +1,11 @@
-WUFC Trading Competition
-Introduction
+<div style="display: flex; align-items: center;">
+  <h1 style="font-size: 24px; font-weight: bold; margin-right: 10px;">WUFC Trading Competition</h1>
+  <img src="https://github.com/user-attachments/assets/1062f996-d5ea-44ec-b961-2137f6a6f707" alt="Logo Kit" width="200" height="200">
+</div>
+
+
+
+
 Welcome to the WUFC Trading Competition! This event is designed to challenge your ability to develop and implement market-making strategies while optimizing risk-adjusted returns.
 
 Your goal is to maximize the Sharpe ratio, which measures risk-adjusted performance.
@@ -26,4 +32,4 @@ Good luck everyone and happy trading!
 
 - Connor & Nikhil
 
-![Logo Kit (1)](https://github.com/user-attachments/assets/1062f996-d5ea-44ec-b961-2137f6a6f707)
+
