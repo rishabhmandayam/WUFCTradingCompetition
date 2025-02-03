@@ -25,3 +25,5 @@ After running this file, the terminal will output a local URL (something like ht
 Good luck everyone and happy trading!
 
 - Connor & Nikhil
+
+![Logo Kit (1)](https://github.com/user-attachments/assets/1062f996-d5ea-44ec-b961-2137f6a6f707)
