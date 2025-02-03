@@ -43,31 +43,7 @@ class LiquidityBot(Participant):
             max_spread_width: float = 5.0,
             use_price_generator_duration: float = 4.0
     ):
-        """
-        Initializes the LiquidityBot with default strategy parameters.
 
-        :param participant_id: Unique ID for the competitor.
-        :param order_queue_manager: Reference to the OrderQueueManager.
-        :param price_generator: Instance of PriceGenerator to obtain current prices.
-        :param order_book_manager: Reference to the OrderBookManager.
-        :param balance: Starting balance for the competitor.
-        :param symbols: List of symbols to trade. Defaults to keys from price_generator.
-        :param average_interval: Average interval between strategy executions.
-        :param interval_jitter: Jitter to add randomness to sleep intervals.
-        :param mean_quantity: Mean quantity for orders.
-        :param quantity_std_dev: Standard deviation for order quantities.
-        :param market_order_probability: Probability of placing a market order.
-        :param base_spread: Base spread for limit orders.
-        :param levels: Number of levels in the liquidity ladder.
-        :param level_spacing: Spacing between levels.
-        :param max_position: Maximum allowed position per symbol.
-        :param max_balance_use_fraction: Fraction of balance to use per buy order.
-        :param max_order_age: Maximum age before an order is considered stale.
-        :param stale_check_interval: Interval to check for stale orders.
-        :param max_spread_width: Maximum allowed spread width.
-        :param use_price_generator_duration: Duration after which to switch from price generator to order book prices.
-        """
-        # Initialize the base Participant class
         super().__init__(
             participant_id=participant_id,
             balance=balance,

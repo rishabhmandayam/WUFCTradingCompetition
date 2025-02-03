@@ -3,28 +3,18 @@
 <head>
     <title>Dashboard</title>
     <style>
-        /*
-           Overall scheme:
-             - Header/Footer: black background (#111 or #000), white text
-             - Main accent color: red (#ff2d2d) for buttons/ high-level headings
-             - Light backgrounds (#fff) for sections/tables, with black (#333) text
-        */
-
-        /* BODY */
         body {
             font-family: "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #fff; /* White background for good readability */
-            color: #333;       /* Dark text color */
+            background: #fff;
+            color: #333;
         }
 
-        /* HEADER & FOOTER */
         header, footer {
-            background-color: #000;  /* Black background */
-            color: #fff;             /* White text */
+            background-color: #000;
+            color: #fff;
             padding: 20px;
-            /* If you have a bull silhouette, you can keep using it: */
             background-image: url('/static/bull_silhouette.png');
             background-repeat: no-repeat;
             background-position: right bottom;
@@ -43,13 +33,12 @@
             padding: 20px;
         }
 
-        /* HEADINGS */
+
         h1, h2, h3 {
             margin-bottom: 10px;
-            color: #ff2d2d; /* Use red accent for headings */
+            color: #ff2d2d;
         }
 
-        /* FORMS */
         form {
             margin: 10px 0;
         }
@@ -59,7 +48,7 @@
             margin-right: 10px;
             vertical-align: middle;
             font-weight: bold;
-            color: #333; /* Slightly darker for contrast on white backgrounds */
+            color: #333;
         }
         input[type=text], select {
             padding: 5px;
@@ -70,8 +59,8 @@
 
         /* BUTTONS */
         button {
-            background: #ff2d2d;   /* Red button */
-            color: #fff;          /* White text */
+            background: #ff2d2d;
+            color: #fff;
             border: none;
             padding: 6px 12px;
             cursor: pointer;
@@ -79,10 +68,10 @@
             font-weight: bold;
         }
         button:hover {
-            background: #cc0202;  /* Darker red on hover */
+            background: #cc0202;
         }
 
-        /* NAV */
+
         nav {
             margin-bottom: 20px;
         }
@@ -100,25 +89,25 @@
             color: #fff;
         }
 
-        /* SECTIONS */
+
         .section {
             margin-bottom: 30px;
-            background: #fff;  /* White background block */
+            background: #fff;
             padding: 15px;
             border-radius: 5px;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.08); /* Subtle shadow for a "card" effect */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08);
         }
 
-        /* TABLES */
+
         table {
-            border-collapse: separate;  /* We can do separate to allow spacing if we want */
+            border-collapse: separate;
             border-spacing: 0;
             width: 100%;
             margin-bottom: 20px;
-            background: #fff; /* White background inside the section, consistent */
+            background: #fff;
             box-shadow: 0 2px 3px rgba(0,0,0,0.08);
             border-radius: 4px;
-            overflow: hidden;  /* If we have rounded corners, this ensures the table corners are clipped */
+            overflow: hidden;
         }
         th, td {
             text-align: left;
@@ -130,7 +119,7 @@
             background: #f7f7f7;
             font-weight: bold;
             border-bottom: 2px solid #ddd;
-            color: #555; /* Slightly darker text for the header row */
+            color: #555;
         }
         table thead th {
             text-transform: uppercase;
@@ -138,13 +127,12 @@
             font-size: 0.9rem;
         }
         table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Subtle zebra striping */
+            background-color: #f9f9f9;
         }
         table tbody tr:hover {
             background-color: #f1f1f1;
         }
 
-        /* ORDERBOOK TABLE SPECIFICS */
         table.orderbook-table thead th {
             background-color: #f0f0f0;
             color: #333;
@@ -160,10 +148,9 @@
         .orderbook-table td:nth-child(1),
         .orderbook-table td:nth-child(2),
         .orderbook-table td:nth-child(3) {
-            text-align: center; /* Price, Quantity, Timestamp columns center-aligned */
+            text-align: center;
         }
 
-        /* FLEX LAYOUT FOR BIDS/ASKS TABLES */
         .flex-row {
             display: flex;
             flex-direction: row;
@@ -175,12 +162,12 @@
             overflow-x: auto;
         }
 
-        /* HOLDINGS TABLE STYLING */
+
         #holdings-container table {
             margin-bottom: 10px;
         }
 
-        /* FOOTER */
+
         footer {
             text-align: center;
         }
@@ -195,8 +182,7 @@
   right: 15px;
   font-size: 1.3em;
   color: #fff;
-  /* Let’s give it a bold, distinctive look: */
-  background: rgba(0, 0, 0, 0.6);  /* semi-transparent black backdrop */
+  background: rgba(0, 0, 0, 0.6);
   padding: 6px 14px;
   border-radius: 18px;
   font-weight: bold;
@@ -204,7 +190,6 @@
   transition: background 0.3s ease;
 }
 
-/* Optionally, you can change the timer's background color on hover or if time is low. */
 #countdown-timer.low-time {
   background: rgba(255, 45, 45, 0.8);  /* bright red if time is critical */
   color: #fff;
@@ -286,32 +271,10 @@
             <p>PNL: $<span id="pnl-value">{{ pnl|round(2) }}</span></p>
         </div>
     </div>
-<!-- 
-    <div class="section">
-        <h2>Place Order</h2>
-        <form method="POST">
-            <label>Side:</label>
-            <select name="side">
-                <option value="buy">Buy</option>
-                <option value="sell">Sell</option>
-            </select><br/>
-            <label>Order Type:</label>
-            <select name="order_type">
-                <option value="limit">Limit</option>
-                <option value="market">Market</option>
-            </select><br/>
-            <label>Price (limit):</label>
-            <input type="text" name="price" /><br/>
-            <label>Quantity:</label>
-            <input type="text" name="quantity" value="10" /><br/>
-            <input type="hidden" name="symbol" value="{{selected_symbol}}" /> //TODO: FIX THIS SHIT
-            <button type="submit">Submit</button>
-        </form>
-    </div> -->
 
 </div>
 <footer>
-    <p>&copy; 2024 WUFC Trading Comp</p>
+    <p>&copy; 2025 WUFC Trading Comp</p>
 </footer>
 
 <script>
@@ -326,22 +289,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentSymbol = symbolSelect.value;
     
-    //callAllStrategies()
 
-    // Fetch and update order book
+
     function updateOrderBook() {
-    const requestSymbol = currentSymbol;  // see the approach for discarding stale data
+    const requestSymbol = currentSymbol;
     fetch(`/orderbook_data?symbol=${requestSymbol}`)
         .then(response => response.json())
         .then(data => {
-            // If the symbol has changed since fetch started, discard
+
             if (requestSymbol !== currentSymbol) return;
 
             const { bids, asks } = data;
             bidsTableBody.innerHTML = '';
             asksTableBody.innerHTML = '';
 
-            // Ensure slicing of bids and asks
             const topBids = bids.slice(0, 30);
             const topAsks = asks.slice(0, 30);
 
@@ -360,7 +321,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(err => console.error('Error updating order book:', err));
 }
 
-    // Fetch and update participant data (holdings, balance, PnL)
     function updateParticipantData() {
         fetch(`/participant_data`)
             .then(response => response.json())
@@ -381,14 +341,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(err => console.error('Error updating participant data:', err));
     }
 
-    // When the symbol changes, update currentSymbol and refresh order book
     symbolSelect.addEventListener('change', () => {
         currentSymbol = symbolSelect.value;
         obSymbolSpan.textContent = currentSymbol;
         updateOrderBook();
     });
 
-    // Optionally call all strategies less frequently or remove
     function callAllStrategies() {
         fetch(`/call_all_strategies`)
             .then(response => response.json())
@@ -405,46 +363,41 @@ document.addEventListener('DOMContentLoaded', function() {
         //callAllStrategies();
     }, 250);
 
-    // Initial load
+
     updateOrderBook();
     updateParticipantData();
 });
-let roundDuration = 90; // e.g., 5 * 60 for 5 minutes
+let roundDuration = 300;
 let ongoing = false;
-const HEARTBEAT_INTERVAL = 1000; // 1 second for regular heartbeat
-const HEARTBEAT_THRESHOLD = 5000; // 5 seconds for detecting script termination
+const HEARTBEAT_INTERVAL = 1000;
+const HEARTBEAT_THRESHOLD = 5000;
 
 function startCountdown() {
     const timerEl = document.getElementById('countdown-timer');
     if (!timerEl) return;
 
-    // Check if a saved start time exists or detect stale state
     let startTime = localStorage.getItem('roundStartTime');
     let lastHeartbeat = localStorage.getItem('lastHeartbeat');
     let currentTime = Date.now();
 
     if (!startTime || !lastHeartbeat || currentTime - lastHeartbeat > HEARTBEAT_THRESHOLD) {
-        // Timer reset due to stale state or no start time
         startTime = currentTime;
         localStorage.setItem('roundStartTime', startTime);
     }
 
-    // Calculate remaining time based on elapsed time
     const elapsed = Math.floor((currentTime - startTime) / 1000); // Convert ms to seconds
     let remaining = roundDuration - elapsed;
 
     if (remaining <= 0) {
-        // If time has already elapsed, reset the state and redirect
+
         endCountdown();
         return;
     }
 
     const updateTimer = () => {
-        // Convert 'remaining' seconds into mm:ss
         let minutes = Math.floor(remaining / 60);
         let seconds = remaining % 60;
 
-        // Format with leading zero if needed
         let display =
             (minutes < 10 ? "0" : "") + minutes + ":" +
             (seconds < 10 ? "0" : "") + seconds;
@@ -458,7 +411,6 @@ function startCountdown() {
         }
 
         if (remaining <= 0) {
-            // Time is up: Reset state and redirect
             endCountdown();
         } else {
             remaining--;
@@ -466,13 +418,11 @@ function startCountdown() {
         }
     };
 
-    // Start the timer only if it hasn't started already
     if (!ongoing) {
         ongoing = true;
         updateTimer();
     }
 
-    // Start heartbeat
     startHeartbeat();
 }
 
@@ -488,12 +438,11 @@ function startHeartbeat() {
 
 function endCountdown() {
     ongoing = false;
-    localStorage.removeItem('roundStartTime'); // Clear the timer state
-    localStorage.removeItem('lastHeartbeat'); // Clear the heartbeat state
-    window.location.href = "/end_round"; // Redirect to the end-round page
+    localStorage.removeItem('roundStartTime');
+    localStorage.removeItem('lastHeartbeat');
+    window.location.href = "/end_round";
 }
 
-// Call startCountdown after DOM loads or within your existing DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
     startCountdown();
 });

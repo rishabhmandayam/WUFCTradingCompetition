@@ -1,16 +1,6 @@
 
 class OrderList:
-    """Doubly-Linked List Container Class.
 
-    Stores head and tail orders, as well as count.
-
-    Keeps a reference to its parent LimitLevel Instance.
-
-    This container was added because it makes deleting the LimitLevels easier.
-
-    Has no other functionality.
-
-    """
     __slots__ = ['head', 'tail', 'parent_limit', 'count']
 
     def __init__(self, parent_limit):
@@ -23,14 +13,7 @@ class OrderList:
         return self.count
 
     def append(self, order):
-        """Appends an order to this List.
 
-        Same as LimitLevel append, except it automatically updates head and tail
-        if it's the first order in this list.
-
-        :param order:
-        :return:
-        """
         if not self.tail:
             order.root = self
             self.tail = order

@@ -3,28 +3,20 @@
 <head>
     <title>Participant Login</title>
      <style>
-        /*
-           Overall scheme:
-             - Header/Footer: black background (#111 or #000), white text
-             - Main accent color: red (#ff2d2d) for buttons/ high-level headings
-             - Light backgrounds (#fff) for sections/tables, with black (#333) text
-        */
 
-        /* BODY */
         body {
             font-family: "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #fff; /* White background for good readability */
-            color: #333;       /* Dark text color */
+            background: #fff;
+            color: #333;
         }
 
         /* HEADER & FOOTER */
         header, footer {
-            background-color: #000;  /* Black background */
-            color: #fff;             /* White text */
+            background-color: #000;
+            color: #fff;
             padding: 20px;
-            /* If you have a bull silhouette, you can keep using it: */
             background-image: url('/static/bull_silhouette.png');
             background-repeat: no-repeat;
             background-position: right bottom;
@@ -36,20 +28,17 @@
         }
         footer h1 { font-size: 1.2em; }
 
-        /* CONTAINER */
         .container {
             max-width: 1200px;
             margin: auto;
             padding: 20px;
         }
 
-        /* HEADINGS */
         h1, h2, h3 {
             margin-bottom: 10px;
-            color: #ff2d2d; /* Use red accent for headings */
+            color: #ff2d2d;
         }
 
-        /* FORMS */
         form {
             margin: 10px 0;
         }
@@ -59,7 +48,7 @@
             margin-right: 10px;
             vertical-align: middle;
             font-weight: bold;
-            color: #333; /* Slightly darker for contrast on white backgrounds */
+            color: #333;
         }
         input[type=text], select {
             padding: 5px;
@@ -68,10 +57,9 @@
             border-radius: 3px;
         }
 
-        /* BUTTONS */
         button {
-            background: #ff2d2d;   /* Red button */
-            color: #fff;          /* White text */
+            background: #ff2d2d;
+            color: #fff;
             border: none;
             padding: 6px 12px;
             cursor: pointer;
@@ -79,10 +67,9 @@
             font-weight: bold;
         }
         button:hover {
-            background: #cc0202;  /* Darker red on hover */
+            background: #cc0202;
         }
 
-        /* NAV */
         nav {
             margin-bottom: 20px;
         }
@@ -100,25 +87,23 @@
             color: #fff;
         }
 
-        /* SECTIONS */
         .section {
             margin-bottom: 30px;
-            background: #fff;  /* White background block */
+            background: #fff;
             padding: 15px;
             border-radius: 5px;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.08); /* Subtle shadow for a "card" effect */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.08);
         }
 
-        /* TABLES */
         table {
-            border-collapse: separate;  /* We can do separate to allow spacing if we want */
+            border-collapse: separate;
             border-spacing: 0;
             width: 100%;
             margin-bottom: 20px;
-            background: #fff; /* White background inside the section, consistent */
+            background: #fff;
             box-shadow: 0 2px 3px rgba(0,0,0,0.08);
             border-radius: 4px;
-            overflow: hidden;  /* If we have rounded corners, this ensures the table corners are clipped */
+            overflow: hidden;
         }
         th, td {
             text-align: left;
@@ -130,7 +115,7 @@
             background: #f7f7f7;
             font-weight: bold;
             border-bottom: 2px solid #ddd;
-            color: #555; /* Slightly darker text for the header row */
+            color: #555;
         }
         table thead th {
             text-transform: uppercase;
@@ -138,13 +123,12 @@
             font-size: 0.9rem;
         }
         table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Subtle zebra striping */
+            background-color: #f9f9f9;
         }
         table tbody tr:hover {
             background-color: #f1f1f1;
         }
 
-        /* ORDERBOOK TABLE SPECIFICS */
         table.orderbook-table thead th {
             background-color: #f0f0f0;
             color: #333;
@@ -160,10 +144,9 @@
         .orderbook-table td:nth-child(1),
         .orderbook-table td:nth-child(2),
         .orderbook-table td:nth-child(3) {
-            text-align: center; /* Price, Quantity, Timestamp columns center-aligned */
+            text-align: center;
         }
 
-        /* FLEX LAYOUT FOR BIDS/ASKS TABLES */
         .flex-row {
             display: flex;
             flex-direction: row;
@@ -175,12 +158,10 @@
             overflow-x: auto;
         }
 
-        /* HOLDINGS TABLE STYLING */
         #holdings-container table {
             margin-bottom: 10px;
         }
 
-        /* FOOTER */
         footer {
             text-align: center;
         }
@@ -206,7 +187,7 @@
     </div>
 </div>
 <footer>
-    <p>&copy; 2024 WUFC Trading Comp</p>
+    <p>&copy; 2025 WUFC Trading Comp</p>
 </footer>
 </body>
 </html>

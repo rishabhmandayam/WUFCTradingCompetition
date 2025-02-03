@@ -34,13 +34,7 @@ class ParticipantManager:
         seller_participant_id: str, 
         trade_details: Dict[str, Any]
     ):
-        """
-        Sends the execution report to the buyer and seller participants.
-        
-        :param buyer_participant_id: ID of the buyer participant.
-        :param seller_participant_id: ID of the seller participant.
-        :param trade_details: Dictionary containing trade details (order_id, symbol, price, quantity, etc.).
-        """
+
         buyer_report = {
             'order_id': trade_details['buyer_order_id'],
             'symbol': trade_details['symbol'],
@@ -57,13 +51,11 @@ class ParticipantManager:
             'quantity': trade_details['quantity']
         }
 
-        # Notify the buyer participant
         buyer = self.get_participant(buyer_participant_id)
         if buyer:
             buyer.receive_execution_report(buyer_report)
 
 
-        # Notify the seller participant
         seller = self.get_participant(seller_participant_id)
         if seller:
             seller.receive_execution_report(seller_report)

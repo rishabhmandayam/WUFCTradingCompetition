@@ -5,26 +5,16 @@ from dataclasses import dataclass
 
 @dataclass
 class Order:
-    """Doubly-Linked List Order item.
 
-    Keeps a reference to root, as well as previous and next order in line.
-
-    It also performs any and all updates to the root's tail, head and count
-    references, as well as updating the related LimitLevel's size, whenever
-    a method is called on this instance.
-
-    Offers append() and pop() methods. Prepending isn't implemented.
-
-    """
 
     order_id: str
     timestamp: float
-    price: Optional[float]  # None for market orders
+    price: Optional[float]
     size: int
-    is_bid: bool  # true for 'buy' and false for 'sell'
-    order_type: str  # 'market' or 'limit' or 'cancel'
+    is_bid: bool
+    order_type: str
     participant_id: str
-    symbol: str  # Ticker symbol of the security
+    symbol: str
 
     
 
@@ -39,18 +29,13 @@ class Order:
         return self.root.parent_limit
 
     def append(self, order):
-        """Append an order.
 
-        :param order: Order() instance
-        :return:
-        """
         if self.next_item is None:
             self.next_item = order
             self.next_item.previous_item = self
             self.next_item.root = self.root
             
 
-            # Update Root Statistics in OrderList root obj
             self.root.count += 1
             self.root.tail = order
 
@@ -58,16 +43,10 @@ class Order:
             
 
         else:
-            #this shouldn't happen.
             self.root.append(order)
-            #self.root.tail.append(order)
-            #self.next_item.append(order)
 
     def pop_from_list(self):
-        """Pops this item from the DoublyLinkedList it belongs to.
 
-        :return: Order() instance values as tuple
-        """
         if self.previous_item is None:
             # We're head
             self.root.head = self.next_item
@@ -80,7 +59,6 @@ class Order:
             if self.previous_item:
                 self.previous_item.next_item = None
 
-        # Update the Limit Level and root
         self.root.count -= 1
         self.parent_limit.size -= self.size
 
@@ -113,9 +91,7 @@ class Order:
 
     @staticmethod
     def create_market_order(size: int, side: str, participant_id: str, symbol: str) -> 'Order':
-        """
-        Factory method to create a market order.
-        """
+
         if (side == 'buy'):
             is_bid = True
         elif (side == 'sell'):
@@ -126,7 +102,7 @@ class Order:
         return Order(
             order_id=str(uuid.uuid4()),
             timestamp=time.time(),
-            price=None,  # Market orders do not have a price
+            price=None,
             size=size,
             is_bid=is_bid,
             order_type='market',
