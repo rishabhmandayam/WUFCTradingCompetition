@@ -14,9 +14,7 @@ class InternalOrderBook:
     def __init__(self, market_ticker, init_price):
         self.market_ticker = market_ticker
         self.scale = 100  # conversion factor: 1 unit of price equals 100 in our level system
-        # Compute maximum level from init_price (converted to our units) multiplied by 4.
         self.max_level = int(init_price * 4 * self.scale)
-        # Arrays cover levels from 0 up to max_level (inclusive)
         self.bids = np.zeros(self.max_level + 1, dtype=int)
         self.asks = np.zeros(self.max_level + 1, dtype=int)
         self.last_seq = None  # for later use if needed
@@ -66,7 +64,6 @@ class InternalOrderBook:
         if new_max_level > self.max_level:
             self.resize(new_max_level)
 
-        # In a snapshot the entire order book is replaced so clear out the arrays first
         self.bids.fill(0)
         self.asks.fill(0)
 
