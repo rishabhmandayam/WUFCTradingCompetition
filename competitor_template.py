@@ -18,6 +18,7 @@ Happy Trading!
 """
 
 from typing import Optional, List, Dict
+import numpy as np
 
 from Participant import Participant
 
@@ -45,16 +46,21 @@ class CompetitorBoilerplate(Participant):
         # Strategy parameters (fixed defaults)
         self.symbols: List[str] = ["NVR", "CPMD", "MFH", "ANG", "TVW"]
         self.book_pressures: Dict[str, List[float]] = {symbol: [] for symbol in self.symbols}
+        self.init_balance = balance
         
 ## ONLY EDIT THE CODE BELOW 
 
     def strategy(self):
         """
         Implement your core trading logic here.
-        Now storing book_pressure history, calculating variance,
+        Now storing book_pressure history, calculating variance using NumPy,
         computing a width based on the current book_pressure and volume,
         and submitting limit orders on both bid and ask sides.
         """
+        print(self.get_balance)
+        #print(balance)
+        #if balance > self.init_balance:
+        #   return
 
         # First, cancel any existing orders from the previous round.
         if hasattr(self, 'last_submitted_order_ids'):
@@ -82,11 +88,11 @@ class CompetitorBoilerplate(Participant):
             if book_pressure is not None:
                 self.book_pressures[symbol].append(book_pressure)
             
-            #vol calculations
-            if len(self.book_pressures[symbol]) > 1:
-                mean_bp = sum(self.book_pressures[symbol]) / len(self.book_pressures[symbol])
-                variance = sum((bp - mean_bp) ** 2 for bp in self.book_pressures[symbol]) / len(self.book_pressures[symbol])
-                stdev = variance ** 0.5 
+            # Using numpy for faster variance calculation
+            arr = np.array(self.book_pressures[symbol])
+            if arr.size > 1:
+                variance = np.var(arr)
+                stdev = np.sqrt(variance)
             else:
                 variance = 0.0
                 stdev = 0.0  
