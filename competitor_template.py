@@ -74,7 +74,7 @@ class CompetitorBoilerplate(Participant):
                 bid_price, bid_vol = bids[0]
                 ask_price, ask_vol = asks[0]
                 total_vol = bid_vol + ask_vol
-                book_pressure = (bid_price * bid_vol + ask_price * ask_vol) / total_vol if total_vol else None
+                book_pressure = (bid_price * ask_vol + ask_price * bid_vol) / total_vol if total_vol else None
             else:
                 book_pressure = None
                 total_vol = 0
