@@ -44,25 +44,68 @@ class CompetitorBoilerplate(Participant):
 
         # Strategy parameters (fixed defaults)
         self.symbols: List[str] = ["NVR", "CPMD", "MFH", "ANG", "TVW"]
+        self.book_pressures: Dict[str, List[float]] = {symbol: [] for symbol in self.symbols}
         
 ## ONLY EDIT THE CODE BELOW 
 
     def strategy(self):
         """
         Implement your core trading logic here.
-        
-        Example:
-            def strategy(self):
-                snapshot = self.get_order_book_snapshot("NVR")
-                bids = snapshot.get('bids', [])
-                asks = snapshot.get('asks', [])
-                if not bids or not asks:
-                    return
-                best_bid = bids[0][0]
-                best_ask = asks[0][0]
-                if best_ask < 150:
-                    order_id = self.create_limit_order(price=149.5, size=10, side='buy', symbol="NVR")
-                    
+        Now storing book_pressure history, calculating variance,
+        computing a width based on the current book_pressure and volume,
+        and submitting limit orders on both bid and ask sides.
         """
-        # Placeholder for competitor's strategy logic
+
+        # First, cancel any existing orders from the previous round.
+        if hasattr(self, 'last_submitted_order_ids'):
+            for symbol, orders in self.last_submitted_order_ids.items():
+                if orders.get('bid'):
+                    self.remove_order(order_id=orders['bid'], symbol=symbol)
+                if orders.get('ask'):
+                    self.remove_order(order_id=orders['ask'], symbol=symbol)
+
+        order_ids = {}
+        for symbol in self.symbols:
+            snapshot = self.get_order_book_snapshot(symbol=symbol)
+            bids = snapshot.get('bids', [])
+            asks = snapshot.get('asks', [])
+            
+            if bids and asks:
+                bid_price, bid_vol = bids[0]
+                ask_price, ask_vol = asks[0]
+                total_vol = bid_vol + ask_vol
+                book_pressure = (bid_price * bid_vol + ask_price * ask_vol) / total_vol if total_vol else None
+            else:
+                book_pressure = None
+                total_vol = 0
+
+            if book_pressure is not None:
+                self.book_pressures[symbol].append(book_pressure)
+            
+            #vol calculations
+            if len(self.book_pressures[symbol]) > 1:
+                mean_bp = sum(self.book_pressures[symbol]) / len(self.book_pressures[symbol])
+                variance = sum((bp - mean_bp) ** 2 for bp in self.book_pressures[symbol]) / len(self.book_pressures[symbol])
+                stdev = variance ** 0.5 
+            else:
+                variance = 0.0
+                stdev = 0.0  
+
+            width = stdev
+
+            bid_limit_price = book_pressure - width if book_pressure is not None else None
+            ask_limit_price = book_pressure + width if book_pressure is not None else None
+
+            if bid_limit_price is not None:
+                bid_order_id = self.create_limit_order(price=bid_limit_price, size=10, side='buy', symbol=symbol)
+            else:
+                bid_order_id = None
+            if ask_limit_price is not None:
+                ask_order_id = self.create_limit_order(price=ask_limit_price, size=10, side='sell', symbol=symbol)
+            else:
+                ask_order_id = None
+
+            order_ids[symbol] = {'bid': bid_order_id, 'ask': ask_order_id}
+
+        self.last_submitted_order_ids = order_ids
         pass
