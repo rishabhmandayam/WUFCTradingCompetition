@@ -123,7 +123,7 @@ class CompetitorBoilerplate(Participant):
             )
 
             if best_levels and stdev > 0:
-                risk_nuetral_trades = self.get_size(best_levels=best_levels, fair_value=book_pressure, global_sigma=stdev, alpha=50, delta=1)
+                risk_nuetral_trades = self.get_size(best_levels=best_levels, fair_value=book_pressure, global_sigma=stdev, alpha=10, delta=0.8)
                 position = portfolio.get(symbol, None)
                 if position is not None:
                     pos_variance = (position ** 2) * variance
@@ -134,10 +134,10 @@ class CompetitorBoilerplate(Participant):
 
                 kappa = 0.0008
                 old_bid_size = risk_nuetral_trades["Bid"]["Size"]
-                new_bid_size = round(old_bid_size * np.exp(-1 * kappa * pos_variance * partial), 2) #clip to 2
+                new_bid_size = round(old_bid_size * np.exp(-1 * kappa * pos_variance * partial), 0)
 
                 old_ask_size = risk_nuetral_trades["Ask"]["Size"]
-                new_ask_size = round(old_ask_size * np.exp(kappa * pos_variance * partial), 2) 
+                new_ask_size = round(old_ask_size * np.exp(kappa * pos_variance * partial), 0) 
                 
                 bid_order_id = self.create_limit_order(
                     price=risk_nuetral_trades["Bid"]["Level"],
