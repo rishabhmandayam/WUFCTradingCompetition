@@ -6,7 +6,6 @@ import numpy as np
 from typing import List, Optional, Dict
 from enum import Enum
 
-# Import the updated Participant class
 from Participant import Participant
 from orderForTree import Order
 from PriceGenerator import PriceGenerator
@@ -51,7 +50,6 @@ class LiquidityBot(Participant):
             order_queue_manager=order_queue_manager
         )
 
-        # Strategy parameters (fixed defaults)
         self.__symbols: List[str] = symbols if symbols is not None else list(price_generator.securities.keys())
         self.__average_interval: float = average_interval
         self.__interval_jitter: float = interval_jitter
@@ -68,14 +66,11 @@ class LiquidityBot(Participant):
         self.__max_spread_width: float = max_spread_width
         self.__use_price_generator_duration: float = use_price_generator_duration
 
-        # Initialize random state
         self.random_state = np.random.RandomState(seed=random.randint(0, 2 ** 32 - 1))
 
-        # Track active orders
         self.__active_orders: Dict[str, List[Dict]] = {sym: [] for sym in self.__symbols}
         self.__last_stale_check: float = 0.0
 
-        # Initial prices
         self.initial_prices = {}
         for sym in self.__symbols:
             p = price_generator.get_current_price(sym)
@@ -140,7 +135,6 @@ class LiquidityBot(Participant):
                 status = odict['status']
                 age = current_time - placed_time
                 if status == LocalOrderStatus.IN_ORDER_BOOK and age > self.__max_order_age:
-                    # Use Participant's remove_order to cancel the order
                     removed = self.remove_order(order_id, sym)
                     if removed:
                         odict['status'] = LocalOrderStatus.CANCELLED

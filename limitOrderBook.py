@@ -6,10 +6,10 @@ import threading
 class LimitOrderBook:
 
     def __init__(self, symbol: str):
-        self.bids = LimitLevelTree()      # AVL tree for bids
-        self.asks = LimitLevelTree()      # AVL tree for asks
-        self.best_bid = None             # Points to the LimitLevel node with highest price
-        self.best_ask = None             # Points to the LimitLevel node with lowest price
+        self.bids = LimitLevelTree()      
+        self.asks = LimitLevelTree()     
+        self.best_bid = None             
+        self.best_ask = None            
 
         self._price_levels = {}
         self._orders = {}
@@ -18,7 +18,6 @@ class LimitOrderBook:
         self.price_floor = 0
         self.price_cap = 1000
 
-        # Create a lock to protect order book modifications (including removal)
         self.lock = threading.Lock()
 
     def top_level(self, askForBid: bool):
@@ -47,22 +46,22 @@ class LimitOrderBook:
         self._orders[order.order_id].parent_limit.size -= size_diff
 
     def remove(self, order):
-        # Lock the entire removal process to prevent concurrent modifications.
+       
         with self.lock:
             try:
-                # Remove the order from the _orders dictionary.
+                
                 removed_order = self._orders.pop(order.order_id)
             except KeyError:
                 return False
 
-            # Use the order's price and side to look up the limit level.
+            
             level_key = (removed_order.price, removed_order.is_bid)
             try:
                 limit_level = self._price_levels[level_key]
-                # Remove the order from the limit level's order list.
+               
                 limit_level.orders.remove(removed_order)
 
-                # If the order list at this limit level is now empty, remove the limit level.
+                
                 if len(limit_level.orders) == 0:
                     self._price_levels.pop(level_key)
                     limit_level.remove()
@@ -78,7 +77,6 @@ class LimitOrderBook:
                 pass
 
     def add(self, order):
-        # Check if the order price is within acceptable bounds.
         if order.price < self.price_floor or order.price > self.price_cap:
             print(
                 f"Ignoring order {order.order_id} with price {order.price} outside bounds [{self.price_floor}, {self.price_cap}]")

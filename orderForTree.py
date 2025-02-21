@@ -33,13 +33,13 @@ class Order:
     def pop_from_list(self):
 
         if self.previous_item is None:
-            # We're head
+
             self.root.head = self.next_item
             if self.next_item:
                 self.next_item.previous_item = None
 
         elif self.next_item is None:
-            # We're tail
+
             self.root.tail = self.previous_item
             if self.previous_item:
                 self.previous_item.next_item = None

@@ -8,7 +8,7 @@ class OrderList:
         self.tail = None
         self.count = 0
         self.parent_limit = parent_limit
-        self._lock = threading.Lock()  # Added lock for thread safety
+        self._lock = threading.Lock()
 
     def __len__(self):
         with self._lock:
@@ -16,20 +16,14 @@ class OrderList:
 
     def append(self, order):
         with self._lock:
-            # Set the order's root pointer to this OrderList.
             order.root = self
 
-            # If the list is empty, initialize head and tail with the new order.
             if self.head is None:
                 self.head = order
                 self.tail = order
             else:
-                # Otherwise, link the new order directly to the current tail.
-                # Assumes that the order object has an attribute 'next_item'
                 self.tail.next_item = order
-                # (Optional) If you maintain a doubly-linked list, set the backward pointer:
                 order.previous_item = self.tail
-                # Now update the tail to be the new order.
                 self.tail = order
                 self.parent_limit.size += order.size
             self.count += 1
