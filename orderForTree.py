@@ -28,22 +28,7 @@ class Order:
     def parent_limit(self):
         return self.root.parent_limit
 
-    def append(self, order):
 
-        if self.next_item is None:
-            self.next_item = order
-            self.next_item.previous_item = self
-            self.next_item.root = self.root
-            
-
-            self.root.count += 1
-            self.root.tail = order
-
-            self.parent_limit.size += order.size
-            
-
-        else:
-            self.root.append(order)
 
     def pop_from_list(self):
 

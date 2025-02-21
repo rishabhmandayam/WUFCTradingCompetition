@@ -30,8 +30,8 @@ class LiquidityBot(Participant):
             symbols: Optional[List[str]] = None,
             average_interval: float = 2.0,
             interval_jitter: float = 0.5,
-            mean_quantity: int = 40,
-            quantity_std_dev: float = 9.0,
+            mean_quantity: int = 80,
+            quantity_std_dev: float = 18.0,
             market_order_probability: float = 0.33,
             base_spread: float = 0.5,
             levels: int = 3,
@@ -171,7 +171,7 @@ class LiquidityBot(Participant):
         Places a ladder of limit orders based on the order book's best bid and ask.
         """
         inside_spread = max(0.0001, best_ask - best_bid)
-        stdev = 0.40
+        stdev = 0.60
         for _ in range(self.__levels):
             buy_price = self.random_state.normal(loc=best_bid, scale=stdev)
             sell_price = self.random_state.normal(loc=best_ask, scale=stdev)
