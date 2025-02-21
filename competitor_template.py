@@ -60,7 +60,6 @@ class CompetitorBoilerplate(Participant):
         """
         MIN_EDGE = 0.00
         FADE_RATE = 10**-5 # Fade in percent space per share
-        SIZE = 0.1
 
         #print(balance)
         #if balance > self.init_balance:
@@ -135,6 +134,11 @@ class CompetitorBoilerplate(Participant):
                     bid_sz = np.floor(self.get_balance / bid_limit_price)
 
                 ask_sz = min(min(ask_vol, bid_vol), bid_sz)
+
+                if (ask_vol > bid_vol and pos < 0):
+                    bid_sz = min([bid_vol - pos, ask_vol, np.floor(self.get_balance / bid_limit_price)])
+                if (bid_vol > ask_vol and pos > 0):
+                    ask_sz = min([ask_vol + pos, bid_vol])
 
 
             if bid_limit_price is not None:
