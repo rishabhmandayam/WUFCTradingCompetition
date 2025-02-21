@@ -23,7 +23,7 @@ import numpy as np
 from Participant import Participant
 
 class CompetitorBoilerplate(Participant):
-    def __init__(self, 
+    def __init__(self,
                  participant_id: str,
                  order_book_manager=None,
                  order_queue_manager=None,
@@ -47,8 +47,9 @@ class CompetitorBoilerplate(Participant):
         self.symbols: List[str] = ["NVR", "CPMD", "MFH", "ANG", "TVW"]
         self.book_pressures: Dict[str, List[float]] = {symbol: [] for symbol in self.symbols}
         self.init_balance = balance
-        
-## ONLY EDIT THE CODE BELOW 
+        self.epoch = 0
+
+    ## ONLY EDIT THE CODE BELOW
 
     def strategy(self):
         """
@@ -57,10 +58,18 @@ class CompetitorBoilerplate(Participant):
         computing a width based on the current book_pressure and volume,
         and submitting limit orders on both bid and ask sides.
         """
-        print(self.get_balance)
+        MIN_EDGE = 0.00
+        FADE_RATE = 10**-5 # Fade in percent space per share
+        MAX_CROSS = 100
+
         #print(balance)
         #if balance > self.init_balance:
         #   return
+
+        self.epoch += 1
+        print(self.epoch)
+
+        port = self.get_portfolio
 
         # First, cancel any existing orders from the previous round.
         if hasattr(self, 'last_submitted_order_ids'):
@@ -75,41 +84,74 @@ class CompetitorBoilerplate(Participant):
             snapshot = self.get_order_book_snapshot(symbol=symbol)
             bids = snapshot.get('bids', [])
             asks = snapshot.get('asks', [])
-            
+
+            bid_price = None
+            ask_price = None
+            bid_vol = None
+            ask_vol = None
+
             if bids and asks:
                 bid_price, bid_vol = bids[0]
                 ask_price, ask_vol = asks[0]
-                total_vol = bid_vol + ask_vol
-                book_pressure = (bid_price * ask_vol + ask_price * bid_vol) / total_vol if total_vol else None
-            else:
-                book_pressure = None
-                total_vol = 0
 
-            if book_pressure is not None:
-                self.book_pressures[symbol].append(book_pressure)
-            
-            # Using numpy for faster variance calculation
-            arr = np.array(self.book_pressures[symbol])
-            if arr.size > 1:
-                variance = np.var(arr)
-                stdev = np.sqrt(variance)
-            else:
-                variance = 0.0
-                stdev = 0.0  
 
-            width = stdev
+            pos = 0
+            if symbol in port:
+                pos = port[symbol]
 
-            bid_limit_price = book_pressure - width if book_pressure is not None else None
-            ask_limit_price = book_pressure + width if book_pressure is not None else None
+            fair = None
+            bid_edge = 0
+            ask_edge = 0
+
+            if (bid_price is not None and ask_price is not None):
+                mid = (bid_price + ask_price) / 2.0
+                fair = mid - pos * mid * FADE_RATE
+
+
+                bid_edge = fair - bid_price - 0.01
+                ask_edge = ask_price - fair - 0.01
+
+            bid_limit_price = None
+            ask_limit_price = None
+            bid_sz = None
+            ask_sz = None
+
+            if (bid_price is not None and bid_edge > MIN_EDGE):
+                bid_limit_price = bid_price + 0.01
+                bid_sz = np.floor((bid_edge - MIN_EDGE) / (fair * FADE_RATE))
+                if bid_sz * bid_limit_price > self.get_balance:
+                    bid_sz = np.floor(self.get_balance / bid_limit_price)
+
+            if ask_price is not None and ask_edge > MIN_EDGE:
+                ask_limit_price = ask_price - 0.01
+                ask_sz = np.floor((ask_edge - MIN_EDGE) / (fair * FADE_RATE))
+
+            if (bid_price > ask_price and bid_vol is not None and ask_vol is not None):
+                print("============CROSS============")
+                bid_limit_price = ask_price
+                ask_limit_price = bid_price
+                bid_sz = min(bid_vol, ask_vol)
+                if bid_sz * bid_limit_price > self.get_balance:
+                    bid_sz = np.floor(self.get_balance / bid_limit_price)
+
+                ask_sz = min(min(ask_vol, bid_vol), bid_sz)
+
+                if (ask_vol > bid_vol and pos < 0):
+                    bid_sz = min([MAX_CROSS, bid_vol - pos, ask_vol, np.floor(self.get_balance / bid_limit_price)])
+                if (bid_vol > ask_vol and pos > 0):
+                    ask_sz = min([MAX_CROSS, ask_vol + pos, bid_vol])
+
 
             if bid_limit_price is not None:
-                bid_order_id = self.create_limit_order(price=bid_limit_price, size=10, side='buy', symbol=symbol)
+                bid_order_id = self.create_limit_order(price=bid_limit_price, size=bid_sz, side='buy', symbol=symbol)
             else:
                 bid_order_id = None
             if ask_limit_price is not None:
-                ask_order_id = self.create_limit_order(price=ask_limit_price, size=10, side='sell', symbol=symbol)
+                ask_order_id = self.create_limit_order(price=ask_limit_price, size=ask_sz, side='sell', symbol=symbol)
             else:
                 ask_order_id = None
+
+
 
             order_ids[symbol] = {'bid': bid_order_id, 'ask': ask_order_id}
 
