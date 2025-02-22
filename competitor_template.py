@@ -93,12 +93,12 @@ class InternalOrderBook:
         # Populate the bids side (each level index directly maps to price * scale)
         for price, volume in bids_snapshot:
             level = int(round(price * self.scale))
-            self.bids[level] = volume
+            self.bids[level] = min(volume, 100000)
 
         # Populate the asks side
         for price, volume in asks_snapshot:
             level = int(round(price * self.scale))
-            self.asks[level] = volume
+            self.asks[level] = min(volume, 100000)
 
     def best_bid(self):
         """
@@ -182,8 +182,9 @@ class CompetitorBoilerplate(Participant):
         self.order_books: Dict[str, InternalOrderBook] = {
             symbol: InternalOrderBook(symbol, 1000.00) for symbol in self.symbols
         }
+        self.epoch = 0
 
-## ONLY EDIT THE CODE BELOW
+    ## ONLY EDIT THE CODE BELOW
     def normal_cdf(self, x, loc=0, scale=1):
         return 0.5 * (1 + math.erf((x - loc) / (scale * math.sqrt(2))))
 
@@ -194,8 +195,8 @@ class CompetitorBoilerplate(Participant):
         size_bid = alpha * np.tanh(delta * (score_bid - 0.5))
         size_ask = alpha * np.tanh(delta * (score_ask - 0.5))
         output = {"Bid": {"Size": size_bid, "Level": bid},
-                "Ask": {"Size": size_ask, "Level": ask},
-                "Fair Value": fair_value}
+                  "Ask": {"Size": size_ask, "Level": ask},
+                  "Fair Value": fair_value}
         return output
 
     def strategy(self):
@@ -207,6 +208,8 @@ class CompetitorBoilerplate(Participant):
         """
         portfolio = self.get_portfolio
         print(portfolio)
+
+        self.epoch += 1
 
         # Cancel existing orders
         if hasattr(self, 'last_submitted_order_ids'):
@@ -251,7 +254,7 @@ class CompetitorBoilerplate(Participant):
                 tolerance_bid=10, tolerance_ask=10
             )
 
-            if best_levels and stdev > 0:
+            if best_levels and stdev > 0 and book_pressure:
                 risk_nuetral_trades = self.get_size(best_levels=best_levels, fair_value=book_pressure, global_sigma=stdev, alpha=100, delta=0.8)
                 position = portfolio.get(symbol, None)
                 if position is not None:
@@ -263,10 +266,10 @@ class CompetitorBoilerplate(Participant):
 
                 kappa = 0.0008
                 old_bid_size = risk_nuetral_trades["Bid"]["Size"]
-                new_bid_size = round(old_bid_size * np.exp(-1 * kappa * pos_variance * partial), 0)
+                new_bid_size = round(old_bid_size * np.exp(-1 * kappa * pos_variance * partial * min(10.0, 2**(self.epoch/1000 - 1))), 0)
 
                 old_ask_size = risk_nuetral_trades["Ask"]["Size"]
-                new_ask_size = round(old_ask_size * np.exp(kappa * pos_variance * partial), 0)
+                new_ask_size = round(old_ask_size * np.exp(kappa * pos_variance * partial * min(10.0, 2**(self.epoch/1000 - 1))), 0)
 
                 bid_order_id = self.create_limit_order(
                     price=risk_nuetral_trades["Bid"]["Level"],
